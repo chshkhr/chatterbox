@@ -7,6 +7,15 @@ import gradio as gr
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 print(f"🚀 Running on device: {DEVICE}")
 
+if not torch.cuda.is_available():
+    import torch.serialization as serialization
+
+    def cpu_load(*args, **kwargs):
+        kwargs["map_location"] = torch.device("cpu")
+        return serialization.load(*args, **kwargs)
+
+    torch.load = cpu_load
+
 # --- Global Model Initialization ---
 MODEL = None
 
